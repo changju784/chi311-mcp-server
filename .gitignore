@@ -1,0 +1,58 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.log
+*.sqlite3
+*.db
+*.db-journal
+
+# --- Virtual environments ---
+venv/
+.env/
+.venv/
+env/
+ENV/
+
+# --- FastAPI / Uvicorn runtime files ---
+*.pid
+*.sqlite
+*.sqlite3
+*.db
+instance/
+logs/
+*.jsonl
+
+# --- Playwright ---
+playwright/.cache/
+playwright-report/
+test-results/
+trace.zip
+*.zip
+*.har
+*.webm
+
+# --- VSCode / IDEs ---
+.vscode/
+.idea/
+*.iml
+*.swp
+*.swo
+
+# --- OS-specific ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Docker / build ---
+*.bak
+*.tmp
+*.temp
+build/
+dist/
+*.egg-info/
+*.egg/
+Dockerfile~
+__pypackages__/
