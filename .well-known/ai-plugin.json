@@ -1,0 +1,17 @@
+{
+    "schema_version": "v1",
+    "name_for_human": "Chi311 Agent",
+    "name_for_model": "chi311_agent",
+    "description_for_human": "Helps Chicago residents report 311 issues automatically through natural language.",
+    "description_for_model": "Takes structured service requests and submits them to the Chicago 311 system via browser automation or API simulation.",
+    "auth": {
+        "type": "none"
+    },
+    "api": {
+        "type": "openapi",
+        "url": "https://chi311-mcp-server.onrender.com/openapi.json"
+    },
+    "logo_url": "https://chi311-mcp-server.onrender.com/logo.png",
+    "contact_email": "jichang2@illinois.edu",
+    "legal_info_url": "https://chi311-mcp-server.onrender.com/legal"
+}
