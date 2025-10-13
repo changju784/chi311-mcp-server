@@ -1,0 +1,48 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Chi311 MCP Server API",
+        "version": "0.1.0",
+        "description": "Minimal OpenAPI for ChatGPT MCP plugin"
+    },
+    "paths": {
+        "/mcp/submit_311_request": {
+            "post": {
+                "summary": "Submit a Chicago 311 request",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "request_type": {
+                                        "type": "string"
+                                    },
+                                    "location": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "fields": {
+                                        "type": "object"
+                                    }
+                                },
+                                "required": [
+                                    "request_type",
+                                    "location"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Submission result"
+                    }
+                }
+            }
+        }
+    }
+}

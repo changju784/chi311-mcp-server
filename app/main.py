@@ -1,8 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import StreamingResponse, JSONResponse
 from app.routes import mcp_routes
+from app.routes import sse_routes
 import os
+import asyncio
+import json
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -32,6 +36,7 @@ app.add_middleware(
 
 # Include your MCP routes
 app.include_router(mcp_routes.router, prefix="/mcp", tags=["MCP"])
+app.include_router(sse_routes.router, tags=["SSE"])
 
 # Root route
 @app.get("/")
