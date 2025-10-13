@@ -13,8 +13,7 @@ logger = logging.getLogger("chi311.mcp")
 app = FastAPI(
     title="Chi311 MCP Server",
     description="MCP-compatible API to automate Chicago 311 service requests.",
-    version="0.1.0"
-)
+    version="0.1.0")
 
 # ---------------------------------------------------
 # Mount .well-known and static folders (from project root)
@@ -25,7 +24,9 @@ well_known_path = os.path.join(root_dir, ".well-known")
 static_path = os.path.join(root_dir, "static")
 
 if os.path.exists(well_known_path):
-    app.mount("/.well-known", StaticFiles(directory=well_known_path), name="well-known")
+    app.mount("/.well-known",
+              StaticFiles(directory=well_known_path),
+              name="well-known")
     logger.info(f"Mounted .well-known at {well_known_path}")
 else:
     logger.warning(f".well-known directory not found at {well_known_path}")
@@ -50,6 +51,7 @@ app.include_router(mcp_routes.router, prefix="/mcp", tags=["MCP"])
 app.include_router(sse_routes.router, tags=["SSE"])
 app.include_router(mcp_tools.router, prefix="/mcp/tools", tags=["MCP-Tools"])
 
+
 # ---------------------------------------------------
 # Root route
 # ---------------------------------------------------
@@ -64,11 +66,17 @@ def root():
 @app.get("/.well-known/mcp/tools")
 async def mcp_tools_manifest():
     return {
-        "tools": [
-            {"name": "search", "description": "Search Chi311 automation handlers and form schemas"},
-            {"name": "fetch", "description": "Fetch module or form schema by ID"}
-        ]
+        "tools": [{
+            "name":
+            "search",
+            "description":
+            "Search Chi311 automation handlers and form schemas"
+        }, {
+            "name": "fetch",
+            "description": "Fetch module or form schema by ID"
+        }]
     }
+
 
 # ---------------------------------------------------
 # Main entry (for local testing)
