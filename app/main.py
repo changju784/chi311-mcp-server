@@ -1,19 +1,10 @@
-import os
-import asyncio
-import json
-import logging
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import StreamingResponse, JSONResponse
-
-# Import your existing route modules
 from app.routes import mcp_routes, sse_routes, mcp_tools
+import os
+import logging
 
-# ---------------------------------------------------
-# Logging setup
-# ---------------------------------------------------
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger("chi311.mcp")
 
 # ---------------------------------------------------
@@ -26,22 +17,24 @@ app = FastAPI(
 )
 
 # ---------------------------------------------------
-# Serve .well-known + static files
+# Mount .well-known and static folders (from project root)
 # ---------------------------------------------------
-base_dir = os.path.dirname(os.path.dirname(__file__))
+# This ensures compatibility for Replit and local
+root_dir = os.path.abspath(os.getcwd())
+well_known_path = os.path.join(root_dir, ".well-known")
+static_path = os.path.join(root_dir, "static")
 
-# Serve .well-known (e.g., ai-plugin.json, manifest, MCP tools)
-well_known_path = os.path.join(base_dir, ".well-known")
 if os.path.exists(well_known_path):
     app.mount("/.well-known", StaticFiles(directory=well_known_path), name="well-known")
+    logger.info(f"Mounted .well-known at {well_known_path}")
+else:
+    logger.warning(f".well-known directory not found at {well_known_path}")
 
-# Serve static assets like /static/logo.png
-static_path = os.path.join(base_dir, "static")
 if os.path.exists(static_path):
     app.mount("/static", StaticFiles(directory=static_path), name="static")
 
 # ---------------------------------------------------
-# CORS setup (allow all origins for dev)
+# CORS setup
 # ---------------------------------------------------
 app.add_middleware(
     CORSMiddleware,
@@ -51,64 +44,35 @@ app.add_middleware(
 )
 
 # ---------------------------------------------------
-# Include existing 311 automation routes
+# Include MCP routes (311 automation + SSE)
 # ---------------------------------------------------
 app.include_router(mcp_routes.router, prefix="/mcp", tags=["MCP"])
-app.include_router(mcp_tools.router, prefix="/mcp/tools", tags=["MCP-Tools"])
 app.include_router(sse_routes.router, tags=["SSE"])
+app.include_router(mcp_tools.router, prefix="/mcp/tools", tags=["MCP-Tools"])
 
 # ---------------------------------------------------
 # Root route
 # ---------------------------------------------------
 @app.get("/")
 def root():
-    """Basic health check endpoint."""
     return {"message": "Chi311 MCP Server running!"}
 
+
 # ---------------------------------------------------
-# MCP Tools Manifest
+# MCP tool manifest (ChatGPT discovery)
 # ---------------------------------------------------
 @app.get("/.well-known/mcp/tools")
 async def mcp_tools_manifest():
-    """
-    Return the MCP tool manifest so ChatGPT connectors can discover
-    what tools (search/fetch) are available on this server.
-    """
-    try:
-        return {
-            "tools": [
-                {"name": "search", "description": "Search Chi311 automation handlers and form schemas"},
-                {"name": "fetch", "description": "Fetch module or form schema by ID"}
-            ]
-        }
-    except Exception as e:
-        logger.error("Error generating MCP manifest: %s", e)
-        return {"tools": [{"name": "search"}, {"name": "fetch"}]}
+    return {
+        "tools": [
+            {"name": "search", "description": "Search Chi311 automation handlers and form schemas"},
+            {"name": "fetch", "description": "Fetch module or form schema by ID"}
+        ]
+    }
 
 # ---------------------------------------------------
-# MCP-compatible SSE endpoint (ChatGPT handshake)
-# ---------------------------------------------------
-@app.post("/sse")
-async def mcp_sse_endpoint(request: Request):
-    """
-    MCP-compatible Server-Sent Events endpoint.
-    ChatGPT Connectors open a POST /sse stream here.
-    """
-    async def ping_stream():
-        try:
-            while True:
-                yield "event: ping\ndata: {}\n\n"
-                await asyncio.sleep(10)
-        except asyncio.CancelledError:
-            return
-
-    return StreamingResponse(ping_stream(), media_type="text/event-stream")
-
-# ---------------------------------------------------
-# Entry point for running directly
+# Main entry (for local testing)
 # ---------------------------------------------------
 if __name__ == "__main__":
     import uvicorn
-    port = int(os.environ.get("PORT", 8000))
-    logger.info(f"Starting Chi311 MCP Server on port {port}")
-    uvicorn.run("app.main:app", host="0.0.0.0", port=port, reload=True)
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
