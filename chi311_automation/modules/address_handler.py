@@ -45,13 +45,13 @@ class AddressHandler(BaseHandler):
         """
         super().__init__(page)
     
-    async def setup(self, address: str = "123 Main St, Chicago, IL", apt: str = "Apt 1B") -> bool:
+    async def setup(self, address: str, apt: str = "") -> bool:
         """
         Setup address on the Chicago 311 form.
-        
+
         Args:
-            address: Address to enter (default: "123 Main St, Chicago, IL")
-            apt: Apartment/suite number (default: "Apt 1B")
+            address: Address to enter (required)
+            apt: Apartment/suite number (optional, defaults to empty string)
         
         Returns:
             bool: True if address setup was successful, False otherwise
@@ -116,7 +116,7 @@ class AddressHandler(BaseHandler):
             self._log_operation("Address setup", False, str(e))
             return False
     
-    async def setup_with_retry(self, address: str = "123 Main St, Chicago, IL", apt: str = "Apt 1B", max_retries: int = 3) -> bool:
+    async def setup_with_retry(self, address: str, apt: str = "", max_retries: int = 3) -> bool:
         """
         Setup address with retry mechanism.
         
