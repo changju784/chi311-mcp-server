@@ -1,4 +1,4 @@
-<img width="400" height="400" alt="logo" src="https://github.com/user-attachments/assets/4f2279ce-0e97-4bf1-9e46-c502b7aa7484" />
+<img width="100" height="100" alt="logo" src="https://github.com/user-attachments/assets/4f2279ce-0e97-4bf1-9e46-c502b7aa7484" />
 
 # Chi311 MCP Server
 
