@@ -1,4 +1,5 @@
-C:\projects\chi311-mcp-server\static\logo.png
+<img width="400" height="400" alt="logo" src="https://github.com/user-attachments/assets/4f2279ce-0e97-4bf1-9e46-c502b7aa7484" />
+
 # Chi311 MCP Server
 
 Chi311 Agent is an MCP-compatible server that exposes automation tools for filing non-emergency 311 service requests in the City of Chicago. It combines a FastAPI-hosted API surface with Playwright-based automation modules so an LLM (for example ChatGPT or Anthropic Claude) can discover tools, fetch schemas, and drive automated form submissions.
