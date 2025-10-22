@@ -1,25 +1,10 @@
-# Chi311 MCP Server
-
-**Chi311 Agent** is an AI-assisted 311 request automation system for the City of Chicago.
-
-This repository contains the **MCP server** that allows LLMs to interact with your backend via structured endpoints.
-
----
-
-## 🚀 Features
-- FastAPI-based MCP-compatible server
-- `/mcp/submit_311_request` endpoint
-- Ready for browser automation (Playwright / Skyvern)
-- Model plugin manifest in `.well-known/ai-plugin.json`
-
----
-
-## 🏗️ Run Locally
+C:\projects\chi311-mcp-server\static\logo.png
 # Chi311 MCP Server
 
 Chi311 Agent is an MCP-compatible server that exposes automation tools for filing non-emergency 311 service requests in the City of Chicago. It combines a FastAPI-hosted API surface with Playwright-based automation modules so an LLM (for example ChatGPT or Anthropic Claude) can discover tools, fetch schemas, and drive automated form submissions.
 
 Quick context: Chi311 (City of Chicago 311) provides a public web portal to submit non-emergency service requests (potholes, graffiti, noise complaints, broken street lights, etc.). This repo aims to make those request types automatable by exposing structured schemas and browser automation handlers to an LLM via the Model Context Protocol (MCP) and a small plugin surface.
+(https://311.chicago.gov/s/?language=en_US)
 
 Contents of this README
 - Overview
