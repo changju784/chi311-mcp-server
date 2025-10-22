@@ -15,7 +15,7 @@ Contents of this README
 - Endpoints and tools (what you can call)
 - Safety, configuration, and next steps
   
-<img width="1108" height="1598" alt="Screenshot 2025-10-16 at 10 00 02 PM (1)" src="https://github.com/user-attachments/assets/40bb0da9-15cf-4d7b-80dd-5088aaabd472" />
+<img width="750" height="1000" alt="Screenshot 2025-10-16 at 10 00 02 PM (1)" src="https://github.com/user-attachments/assets/40bb0da9-15cf-4d7b-80dd-5088aaabd472" />
 
 ## Architecture (high level)
 
