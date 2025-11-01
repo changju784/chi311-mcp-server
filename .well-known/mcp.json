@@ -1,0 +1,80 @@
+{
+    "schema_version": "v1",
+    "name_for_human": "Chi311 MCP Server",
+    "name_for_model": "chi311_mcp",
+    "description_for_human": "Model Context Protocol (MCP) manifest for the Chi311 automation server.",
+    "description_for_model": "Provides search/fetch tools and an automation submit endpoint for Chicago 311 service requests, plus an SSE stream for events.",
+    "version": "0.1.0",
+    "auth": {
+        "type": "none"
+    },
+    "tools": [
+        {
+            "id": "search",
+            "name": "search",
+            "description": "Search available Chicago 311 request types and automation handlers.",
+            "method": "POST",
+            "url": "/mcp/tools/search",
+            "content_type": "application/json",
+            "arguments": {
+                "query": {
+                    "type": "string",
+                    "description": "Natural language query to search available request types or handlers."
+                }
+            }
+        },
+        {
+            "id": "fetch",
+            "name": "fetch",
+            "description": "Fetch the full schema or module source for a search result id.",
+            "method": "POST",
+            "url": "/mcp/tools/fetch",
+            "content_type": "application/json",
+            "arguments": {
+                "id": {
+                    "type": "string",
+                    "description": "The id returned by search (module id or form request id)."
+                }
+            }
+        },
+        {
+            "id": "submit_311_request",
+            "name": "submit_311_request",
+            "description": "Trigger the automation orchestration to fill (and optionally submit) a Chicago 311 request.",
+            "method": "POST",
+            "url": "/mcp/submit_311_request",
+            "content_type": "application/json",
+            "arguments": {
+                "request_type": {
+                    "type": "string",
+                    "description": "Request type id from the form schema catalog."
+                },
+                "location": {
+                    "type": "string",
+                    "description": "Human readable location/address."
+                },
+                "description": {
+                    "type": "string",
+                    "description": "Free-text details."
+                },
+                "fields": {
+                    "type": "object",
+                    "description": "Optional mapping of exact field labels to values to override automatic mapping."
+                },
+                "contact": {
+                    "type": "object",
+                    "description": "Optional contact info (first_name, last_name, email, phone)."
+                }
+            }
+        },
+        {
+            "id": "sse",
+            "name": "sse",
+            "description": "Server-Sent Events endpoint clients can open to receive asynchronous events from the MCP server.",
+            "method": "GET",
+            "url": "/sse",
+            "content_type": "text/event-stream"
+        }
+    ],
+    "notes": "This manifest is a static MCP manifest. If you want dynamic values (e.g., public base_url), either generate this file at runtime or ensure it is updated with the correct public URL after deployment. The endpoints are relative to the server root."
+}
