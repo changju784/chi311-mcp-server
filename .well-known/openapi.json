@@ -1,0 +1,128 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Chicago 311 API",
+        "version": "1.0.0",
+        "description": "Submit and track 311 service requests for the City of Chicago."
+    },
+    "servers": [
+        {
+            "url": "https://chi311-mcp-server.onrender.com"
+        }
+    ],
+    "paths": {
+        "/mcp/tools/search": {
+            "post": {
+                "summary": "Search available Chicago 311 request types",
+                "operationId": "searchRequests",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "query": {
+                                        "type": "string",
+                                        "description": "Keyword or phrase to search request types"
+                                    }
+                                },
+                                "required": [
+                                    "query"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful search",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
+        "/mcp/tools/fetch": {
+            "post": {
+                "summary": "Fetch detailed schema for a 311 request type",
+                "operationId": "fetchRequestType",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string",
+                                        "description": "The ID returned by the search endpoint"
+                                    }
+                                },
+                                "required": [
+                                    "id"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Request type details"
+                    }
+                }
+            }
+        },
+        "/mcp/submit_311_request": {
+            "post": {
+                "summary": "Submit a Chicago 311 request",
+                "operationId": "submit311Request",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "request_type": {
+                                        "type": "string"
+                                    },
+                                    "location": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string"
+                                    },
+                                    "contact": {
+                                        "type": "object",
+                                        "properties": {
+                                            "first_name": {
+                                                "type": "string"
+                                            },
+                                            "last_name": {
+                                                "type": "string"
+                                            },
+                                            "email": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "required": [
+                                    "request_type",
+                                    "location"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful submission"
+                    }
+                }
+            }
+        }
+    }
+}
