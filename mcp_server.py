@@ -133,6 +133,40 @@ def create_mcp() -> "FastMCP":
         logger.info("Fetched item: %s", id)
         return item
 
+    @mcp.tool()
+    async def submit(request: dict) -> Dict[str, Any]:
+        """
+        Submit a Chicago 311 automation request.
+
+        Expects a dict matching the ServiceRequest Pydantic model:
+          {"request_type":..., "location":..., "description":..., "fields": {...}}
+
+        Returns the orchestrator result (dry-run by default unless env flags override).
+        """
+        try:
+            # Lazy import to avoid requiring Playwright unless submit is invoked
+            from app.schemas.request_schema import ServiceRequest
+            from app.browser.autofill import simulate_form_fill
+        except Exception as e:
+            logger.error("Failed to import submission helpers: %s", e)
+            return {"status": "error", "message": "Server misconfiguration", "details": str(e)}
+
+        try:
+            # Validate and construct ServiceRequest
+            sr = ServiceRequest(**request)
+        except Exception as e:
+            logger.warning("Invalid request payload for submit: %s", e)
+            return {"status": "error", "message": "Invalid request payload", "details": str(e)}
+
+        # Call the async orchestrator and return its result
+        try:
+            result = await simulate_form_fill(sr)
+            logger.info("Submit tool executed for request_type=%s location=%s", sr.request_type, sr.location)
+            return {"result": result}
+        except Exception as e:
+            logger.exception("Submission failed: %s", e)
+            return {"status": "error", "message": "Submission failed", "details": str(e)}
+
     return mcp
 
 # ---------------------------------------------
