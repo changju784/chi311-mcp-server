@@ -4,6 +4,8 @@ from fastapi.staticfiles import StaticFiles
 from app.routes import mcp_routes, sse_routes, mcp_tools
 import os
 import logging
+import json
+from fastapi.responses import JSONResponse
 
 logger = logging.getLogger("chi311.mcp")
 
@@ -76,6 +78,41 @@ async def mcp_tools_manifest():
             "description": "Fetch module or form schema by ID"
         }]
     }
+
+
+# Provide the MCP manifest at the canonical location expected by connectors
+@app.get("/.well-known/mcp.json", include_in_schema=False)
+def mcp_manifest():
+    # Try to return the static file if present, else return a small generated manifest
+    root_dir = os.path.abspath(os.getcwd())
+    manifest_path = os.path.join(root_dir, ".well-known", "mcp.json")
+    if os.path.exists(manifest_path):
+        try:
+            with open(manifest_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            return JSONResponse(content=data)
+        except Exception:
+            # If parse fails, return raw text wrapped as JSON
+            with open(manifest_path, "r", encoding="utf-8") as f:
+                text = f.read()
+            try:
+                return JSONResponse(content=json.loads(text))
+            except Exception:
+                return JSONResponse(content={"raw": text})
+
+    # Fallback minimal manifest
+    fallback = {
+        "schema_version": "v1",
+        "name_for_human": "Chi311 MCP Server",
+        "name_for_model": "chi311_mcp",
+        "description_for_human": "MCP manifest for Chi311 automation server.",
+        "auth": {"type": "none"},
+        "tools": [{"id": "search", "method": "POST", "url": "/mcp/tools/search"},
+                  {"id": "fetch", "method": "POST", "url": "/mcp/tools/fetch"},
+                  {"id": "submit_311_request", "method": "POST", "url": "/mcp/submit_311_request"},
+                  {"id": "sse", "method": "GET", "url": "/sse"}]
+    }
+    return JSONResponse(content=fallback)
 
 
 # ---------------------------------------------------

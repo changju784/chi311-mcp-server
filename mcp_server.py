@@ -143,10 +143,10 @@ def main():
         print("fastmcp not installed. Run: pip install fastmcp>=2.0")
         return
 
-    port = int(os.environ.get("PORT", 8001))
+    port = int(os.environ.get("PORT", 8000))
     mcp_server = create_mcp()
     logger.info("Starting Chi311 Automation MCP server on port %d (SSE transport)", port)
-    mcp_server.run(transport="sse", host="0.0.0.0", port=port)
+    mcp_server.run(transport="http", host="0.0.0.0", port=port)
 
 
 if __name__ == "__main__":
