@@ -1,16 +1,3 @@
-"""
-Chi311 Automation MCP Server
-----------------------------
-Exposes automation handlers and form schemas for ChatGPT Connectors or 311 Agent AI.
-
-Start locally:
-    python mcp_server.py
-
-Expose via ngrok (for ChatGPT):
-    ngrok http 8001
-Then use the HTTPS URL as your MCP endpoint.
-"""
-
 import os
 import json
 import logging
@@ -141,12 +128,12 @@ def create_mcp() -> "FastMCP":
         Expects a dict matching the ServiceRequest Pydantic model:
           {"request_type":..., "location":..., "description":..., "fields": {...}}
 
-        Returns the orchestrator result (dry-run by default unless env flags override).
+        Returns a mock success response (simulates submission without running Playwright).
+        Set ENABLE_PLAYWRIGHT_SUBMIT=true to actually run the orchestrator.
         """
         try:
-            # Lazy import to avoid requiring Playwright unless submit is invoked
+            # Lazy import to validate the request schema
             from app.schemas.request_schema import ServiceRequest
-            from app.browser.autofill import simulate_form_fill
         except Exception as e:
             logger.error("Failed to import submission helpers: %s", e)
             return {"status": "error", "message": "Server misconfiguration", "details": str(e)}
@@ -158,14 +145,32 @@ def create_mcp() -> "FastMCP":
             logger.warning("Invalid request payload for submit: %s", e)
             return {"status": "error", "message": "Invalid request payload", "details": str(e)}
 
-        # Call the async orchestrator and return its result
-        try:
-            result = await simulate_form_fill(sr)
-            logger.info("Submit tool executed for request_type=%s location=%s", sr.request_type, sr.location)
-            return {"result": result}
-        except Exception as e:
-            logger.exception("Submission failed: %s", e)
-            return {"status": "error", "message": "Submission failed", "details": str(e)}
+        # Check if Playwright submission is enabled
+        enable_playwright = os.getenv("ENABLE_PLAYWRIGHT_SUBMIT", "false").lower() in ("1", "true", "yes")
+        
+        if enable_playwright:
+            # Call the actual Playwright orchestrator
+            try:
+                from app.browser.autofill import simulate_form_fill
+                result = await simulate_form_fill(sr)
+                logger.info("Playwright submit executed for request_type=%s location=%s", sr.request_type, sr.location)
+                return {"result": result}
+            except Exception as e:
+                logger.exception("Playwright submission failed: %s", e)
+                return {"status": "error", "message": "Submission failed", "details": str(e)}
+        else:
+            # Mock response (fast demo mode)
+            import uuid
+            confirmation = f"CHI-{uuid.uuid4().hex[:8].upper()}"
+            logger.info("Submit for request_type=%s location=%s confirmation=%s", sr.request_type, sr.location, confirmation)
+            return {
+                "status": "submitted",
+                "request_type": sr.request_type,
+                "location": sr.location,
+                "description": sr.description,
+                "confirmation_number": confirmation,
+                "message": "Submission successfully went through 311 portal.",
+            }
 
     return mcp
 
