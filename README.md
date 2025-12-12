@@ -19,8 +19,9 @@ Contents of this README
 
 ## Userflow & Live demo links 
 
-Live MCP server hosted: https://chi311-mcp-server.onrender.com/mcp
-Presentation link: 
+- Live MCP server hosted: https://chi311-mcp-server.onrender.com/mcp
+
+- [View Project Presentation (PDF)](Chi-311%20Agent%20AI.pdf) 
 
 User examples: 
 1. Fraud Report at Nike Store reporting to 311 using Claude.
