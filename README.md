@@ -17,9 +17,24 @@ Contents of this README
   
 <img width="750" height="1000" alt="Screenshot 2025-10-16 at 10 00 02 PM (1)" src="https://github.com/user-attachments/assets/40bb0da9-15cf-4d7b-80dd-5088aaabd472" />
 
+## Userflow & Live demo links 
+
+Live MCP server hosted: https://chi311-mcp-server.onrender.com/mcp
+Presentation link: 
+
+User examples: 
+1. Fraud Report at Nike Store reporting to 311 using Claude.
+
+![scenario1-prompt-3x](https://github.com/user-attachments/assets/b87da163-3e61-4e04-93eb-b0276c98a4da)
+
+2. Coyote complaint report at Millennium park by uploading image.
+
+![scenario2-prompt-3x](https://github.com/user-attachments/assets/ae35af80-7c13-4bd2-8694-63a485c7f300)
+
+
 ## Architecture (high level)
 
-- `app/` — FastAPI application and MCP HTTP endpoints
+- `app/` — FastAPI application and FastMCP endpoints
 	- `app/main.py` — FastAPI entrypoint, mounts `.well-known` and `static`, registers routes
 	- `app/routes/mcp_routes.py` — `/mcp/submit_311_request` (automation trigger)
 	- `app/routes/mcp_tools.py` — MCP-style HTTP wrappers: `/mcp/tools/search` and `/mcp/tools/fetch`
@@ -35,6 +50,8 @@ Contents of this README
  - `mcp_server_local.py` — an alternate local MCP entrypoint tailored for stdio-based connectors (Claude Desktop). It exposes tools like `list_request_types`, `describe_request_type`, and `submit_311_request` and is intended to run locally for interactive desktop LLM integrations.
 
 - `.well-known/` — plugin discovery files (`ai-plugin.json`, `openapi.json`) so ChatGPT can install the plugin (dev mode)
+
+<img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/bc2f524e-4917-4b42-9439-0fc3c2837c08" />
 
 ## What this repo exposes to an LLM
 
@@ -82,20 +99,15 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 python mcp_server.py
 ```
 
-## Expose to an LLM (ngrok + plugin discovery)
+## Expose to an LLM (FastMCP + OnRender)
 
 1) Start the app on port 8000 (see above).
 2) Expose it with ngrok (or Cloudflare Tunnel). Example:
-
-```powershell
-ngrok http 8000
-```
-
 3) Copy the public HTTPS URL (e.g. `https://abcd-1234.ngrok.io`).
 4) In ChatGPT (Developer/Plugins), add a custom connector or install the plugin using the manifest URL:
 
 ```
-https://<your-ngrok-host>/.well-known/ai-plugin.json
+Live demo link: https://chi311-mcp-server.onrender.com/mcp
 ```
 
 This plugin manifest and `.well-known/openapi.json` will allow ChatGPT to discover the API. Because the FastAPI app serves MCP tool HTTP endpoints at the same host, both discovery and tool use will route through the same tunnel.
